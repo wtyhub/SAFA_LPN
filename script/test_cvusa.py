@@ -122,7 +122,10 @@ if __name__ == '__main__':
             val_i += sat_global_val.shape[0]
 
         print('   compute accuracy')
-        dist_array = 2 - 2 * np.matmul(sat_global_descriptor, np.transpose(grd_global_descriptor))
+        pair_num = sat_global_descriptor.shape[0]
+        norm_sat = np.repeat(np.sum(np.power(sat_global_descriptor, 2), axis=1, keepdims=True), pair_num, axis=1)
+        norm_grd = np.repeat(np.sum(np.power(grd_global_descriptor, 2), axis=1, keepdims=True), pair_num, axis=1)
+        dist_array = norm_sat + norm_grd.T - 2 * np.matmul(sat_global_descriptor, np.transpose(grd_global_descriptor))
         result = {'distance_metric':dist_array}
         scipy.io.savemat('tf_result.mat', result)
         top1_percent = int(dist_array.shape[0] * 0.01) + 1

@@ -41,7 +41,10 @@ print('learning rate:-----------------------', learning_rate_val)
 def validate(grd_descriptor, sat_descriptor):
     accuracy = 0.0
     data_amount = 0.0
-    dist_array = 2 - 2 * np.matmul(sat_descriptor, np.transpose(grd_descriptor))
+    pair_num = sat_descriptor.shape[0]
+    norm_sat = np.repeat(np.sum(np.power(sat_descriptor, 2), axis=1, keepdims=True), pair_num, axis=1)
+    norm_grd = np.repeat(np.sum(np.power(grd_descriptor, 2), axis=1, keepdims=True), pair_num, axis=1)
+    dist_array = norm_sat + norm_grd.T - 2 * np.matmul(sat_descriptor, np.transpose(grd_descriptor))
     top1_percent = int(dist_array.shape[0] * 0.01) + 1
     for i in range(dist_array.shape[0]):
         gt_dist = dist_array[i, i]
